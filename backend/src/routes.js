@@ -1,7 +1,10 @@
 const express = require('express')
 const routes = express.Router()
-const crypto = require('crypto')
-const connection = require('./database/connection')
+
+const SessionController = require('./controllers/SessionController')
+const NgoController = require('./controllers/NgoController')
+const ProfileController = require('./controllers/ProfileController')
+const IncidentController = require('./controllers/IncidentController')
 
 routes.get('/', (request, response) => {
     return response.json({
@@ -10,21 +13,15 @@ routes.get('/', (request, response) => {
     })
 })
 
-routes.post('/ngos', async (request, response) => {
-    const { name, email, phone, whatsapp, city, state} = request.body
-    console.log({ name, email, phone, whatsapp, city, state})
+routes.post('/sessions', SessionController.create)
 
-    const id = crypto.randomBytes(4).toString('HEX')
+routes.get('/ngos', NgoController.index)
+routes.post('/ngos', NgoController.create)
 
-    await connection('ngos').insert({ id, name, email, phone, whatsapp, city, state})
+routes.get('/profile', ProfileController.index)
 
-    return response.json({ id })
-})
-
-routes.get('/ngos', async (request, response) => {
-    const ngos = await connection('ngos').select('*')
-
-    return response.json(ngos)
-})
+routes.get('/incidents', IncidentController.index)
+routes.post('/incidents', IncidentController.create)
+routes.delete('/incidents/:id', IncidentController.delete)
 
 module.exports = routes
