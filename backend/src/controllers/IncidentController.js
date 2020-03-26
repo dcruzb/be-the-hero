@@ -37,6 +37,11 @@ module.exports = {
         const { id } = request.params
         const ngo_id = request.headers.authorization
 
+        if (!ngo_id) {
+            console.log('IncidentController.delete() - No NGO_ID provided.');
+            return response.status(400).json({ error: 'No NGO_ID provided.'})
+        }
+
         const incident = await connection('incidents')
             .where('id', id)
             .select('ngo_id')
