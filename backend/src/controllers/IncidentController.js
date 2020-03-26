@@ -21,6 +21,11 @@ module.exports = {
         const { title, description, value } = request.body
         const ngo_id = request.headers.authorization;
 
+        if (!ngo_id) {
+            console.log('IncidentController.create() - No NGO_ID provided.');
+            return response.status(400).json({ error: 'No NGO_ID provided.'})
+        }
+
         const result = await connection('incidents').insert({ title, description, value, ngo_id })
 
         const id = result[0]
