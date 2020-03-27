@@ -4,7 +4,6 @@ const connection = require('../database/connection')
 module.exports = {
     async create(request, response) {
         const { name, email, phone, whatsapp, city, state} = request.body
-        console.log({ name, email, phone, whatsapp, city, state})
 
         const id = crypto.randomBytes(4).toString('HEX')
 
