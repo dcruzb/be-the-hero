@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Image, TouchableOpacity, Text } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { Linking } from 'expo'
 import { Feather } from '@expo/vector-icons'
 import * as MailComposer from 'expo-mail-composer'
@@ -11,12 +11,13 @@ import logoImg from '../../assets/logo.png'
 
 export default function Details() {
     const navigation = useNavigation()
-    const phone = "81955558888"
-    const email = "dcb@cin.ufpe.br"
-    const message = 'Hello APAD, I\'m getting in touch because I would like to help in the Incident "Dog run over" with the value of R$ 120,00'
+    const route = useRoute()
+    const incident = route.params.incident
+
+    const message = `Hello ${incident.name}, \nI\'m getting in touch because I would like to help in the Incident "${incident.title}" with the value of ${Intl.NumberFormat('pt-BR', {style: "currency", currency: "BRL"}).format(incident.value)}`
 
     function makeCall() {
-        Linking.openURL(`tel:${phone}`)
+        Linking.openURL(`tel:${incident.phone}`)
         // console.log('callNumber ----> ', phone);
         // let phoneNumber = phone;
         // if (Platform.OS !== 'android') {
@@ -37,13 +38,13 @@ export default function Details() {
     }
 
     function sendWhatsapp() {
-        Linking.openURL(`whatsapp://send?phone=55${phone}&text=${message}`)
+        Linking.openURL(`whatsapp://send?phone=55${incident.whatsapp}&text=${message}`)
     }
 
     function sendMail() {
         MailComposer.composeAsync({
-            subject: 'Hero of the Incident: Dog run over',
-            recipients: [email],
+            subject: `Hero of the Incident: ${incident.title}`,
+            recipients: [incident.email],
             body: message
         })
     }
@@ -59,13 +60,16 @@ export default function Details() {
 
             <View style={styles.incident}>
                 <Text style={styles.incidentProperty}>NGO</Text>
-                <Text style={styles.incidentValue}>APAD</Text>
+                <Text style={styles.incidentValue}>{incident.name} from {incident.city}/{incident.state}</Text>
 
-                <Text style={styles.incidentProperty}>NGO</Text>
-                <Text style={styles.incidentValue}>Cadelinha atropelada</Text>
+                <Text style={styles.incidentProperty}>Incident</Text>
+                <Text style={styles.incidentValue}>{incident.title}</Text>
 
-                <Text style={styles.incidentProperty}>NGO</Text>
-                <Text style={[styles.incidentValue, { marginBottom: 0}]}>R$ 256,89</Text>
+                <Text style={styles.incidentProperty}>Description</Text>
+                <Text style={styles.incidentValue}>{incident.description}</Text>
+
+                <Text style={styles.incidentProperty}>Value</Text>
+                <Text style={[styles.incidentValue, { marginBottom: 0}]}>{Intl.NumberFormat('pt-BR', {style: "currency", currency: "BRL"}).format(incident.value)}</Text>
             </View>
 
             <View style={styles.contactBox}>
